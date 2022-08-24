@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 const client = new Discord.Client({ intents: ["GUILDS", "GUILD_MESSAGES", "DIRECT_MESSAGE_REACTIONS"] });
-const prefix = '-';
+require('dotenv').config()
 
 function sleep(delay) {
   var start = new Date().getTime();
@@ -9,8 +9,8 @@ function sleep(delay) {
 
 var SpotifyWebApi = require('spotify-web-api-node');
 var spotifyApi = new SpotifyWebApi({
-  clientId: '487a69c4183e4469bb965f59911a87ce',
-  clientSecret: '58cf0dafad4e49108379326e41804f0e'
+  clientId: process.env.clientId,
+  clientSecret: process.env.clientSecret
 });
 
 client.on('error', (err) => {
@@ -37,13 +37,13 @@ client.on('messageCreate', message => {
   for (let i = 0; i < words.length; i++) {
     try {
       let parts = words[i].split(":")
-      
+
       const command = parts[0]
 
 
-      if (command === 'https'){wordIndex = i;isLink = true}
+      if (command === 'https') { wordIndex = i; isLink = true }
     }
-    catch(e){console.log(e)}
+    catch (e) { console.log(e) }
   }
 
   if (!isLink) return;
@@ -51,7 +51,7 @@ client.on('messageCreate', message => {
   let parts = words[wordIndex].toString().split(":")
   const command = parts[0]
 
-  
+
   if (command === 'https') {
     try {
       spotifyApi.clientCredentialsGrant().then(function (data) {
@@ -80,15 +80,15 @@ client.on('messageCreate', message => {
               sum += parseInt(songs[i].track.album.release_date)
             }
           }
-          console.log("avg: " + sum/songs.length)
+          console.log("avg: " + sum / songs.length)
           message.channel.send("The Average release date for that playlist is in " + Math.floor(sum / songs.length))
         });
       })
-    }catch {
+    } catch {
       console.log("unable to parse link: " + message.content)
     }
   }
 
 });
 
-client.login('');
+client.login(process.env.TOKEN);
